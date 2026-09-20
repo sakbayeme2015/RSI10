@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RSI Vault — Ratcheting File Encryption & Conversion</title>
+
+  <!-- ===== SEO ===== -->
+  <meta name="description" content="RSI Vault: encrypt and decrypt any file with ratcheting envelope encryption, convert between PDF, Word, Excel, images and 3D meshes, translate YouTube videos, and apply artistic thermal / 3D effects — all locally in your browser." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://your-domain.example/" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <meta name="theme-color" content="#e0945a" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="RSI Vault" />
+  <meta property="og:title" content="RSI Vault — Encrypt, Convert & Transform Files" />
+  <meta property="og:description" content="Local-first file encryption, format conversion, YouTube translation, and artistic 3D/thermal effects. Your keys and files never leave your machine." />
+  <meta property="og:url" content="https://your-domain.example/" />
+  <meta property="og:image" content="https://your-domain.example/og-image.png" />
+
+  <!-- Twitter / X card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="RSI Vault — Encrypt, Convert & Transform Files" />
+  <meta name="twitter:description" content="Local-first file encryption, conversion, YouTube translation, and artistic effects." />
+  <meta name="twitter:image" content="https://your-domain.example/og-image.png" />
+
+  <!-- Structured data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "RSI Vault",
+    "applicationCategory": "SecurityApplication",
+    "operatingSystem": "Any",
+    "description": "Ratcheting envelope file encryption with format conversion, YouTube translation, and artistic effects.",
+    "url": "https://your-domain.example/",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+  }
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/vendor/leaflet.css" />
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div class="grain" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <div class="brand">
+      <span class="mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6">
+          <circle cx="8" cy="8" r="4" />
+          <path d="M11 11 L20 20" />
+          <path d="M17 17 L20 14" />
+          <path d="M20 20 L17 20" />
+        </svg>
+      </span>
+      <div class="brand-text">
+        <h1>RSI&nbsp;Vault</h1>
+        <p>Ratcheting envelope encryption</p>
+      </div>
+    </div>
+    <div class="stack-badge">
+      <span>C</span><i></i><span>Python</span><i></i><span>Node</span><i></i><span>JS</span>
+    </div>
+  </header>
+
+  <main class="layout">
+    <!-- Operation panel -->
+    <section class="panel op-panel">
+      <div class="mode-toggle" role="tablist" aria-label="Operation">
+        <button id="tab-encrypt" class="mode active" role="tab" aria-selected="true">Encrypt</button>
+        <button id="tab-decrypt" class="mode" role="tab" aria-selected="false">Decrypt</button>
+        <button id="tab-convert" class="mode" role="tab" aria-selected="false">Convert</button>
+        <button id="tab-effects" class="mode" role="tab" aria-selected="false">Effects</button>
+        <button id="tab-video" class="mode" role="tab" aria-selected="false">Video</button>
+        <button id="tab-studio" class="mode" role="tab" aria-selected="false">Studio</button>
+        <button id="tab-geo" class="mode" role="tab" aria-selected="false">Geo Map</button>
+        <button id="tab-youtube" class="mode" role="tab" aria-selected="false">▶ YouTube</button>
+      </div>
+
+      <!-- ── Drop zone (hidden in YouTube mode) ── -->
+      <label class="dropzone" id="dropzone" for="file-input">
+        <input type="file" id="file-input" hidden />
+        <div class="dz-inner" id="dz-inner">
+          <svg class="dz-icon" viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.4">
+            <path d="M12 16V4" />
+            <path d="M7 9l5-5 5 5" />
+            <path d="M4 20h16" />
+          </svg>
+          <p class="dz-title" id="dz-title">Drop a file or click to choose</p>
+          <p class="dz-sub" id="dz-sub">Any type — pdf, jpg, xlsx, docx, zip, keys. Up to 50&nbsp;MB.</p>
+        </div>
+      </label>
+
+      <!-- ── Convert field ── -->
+      <div class="field" id="convert-field" hidden>
+        <label for="convert-type">Conversion</label>
+        <select id="convert-type" class="select">
+          <optgroup label="PDF → Office &amp; Web">
+            <option value="pdf2docx">PDF → Word (.docx) — auto-OCR for scans</option>
+            <option value="pdf2docx_ocr">PDF → Word (force OCR, for scans)</option>
+            <option value="pdf2xlsx">PDF → Excel (.xlsx)</option>
+            <option value="pdf2pptx">PDF → PowerPoint (.pptx)</option>
+            <option value="pdf2html">PDF → HTML (.html)</option>
+            <option value="pdf2img_png">PDF → Images, PNG (.zip)</option>
+            <option value="pdf2img_jpg">PDF → Images, JPG (.zip)</option>
+            <option value="pdf2pdfa">PDF → PDF/A (archival)</option>
+          </optgroup>
+          <optgroup label="Office &amp; Web → PDF">
+            <option value="docx2pdf">Word → PDF (.pdf)</option>
+            <option value="xlsx2pdf">Excel → PDF (.pdf)</option>
+            <option value="pptx2pdf">PowerPoint → PDF (.pdf)</option>
+            <option value="html2pdf">HTML → PDF (.pdf)</option>
+            <option value="img2pdf">Image (PNG/JPG) → PDF (.pdf)</option>
+          </optgroup>
+          <optgroup label="Organise PDF">
+            <option value="pdf_merge">Merge PDFs (2+ files)</option>
+            <option value="pdf_split">Split PDF (per page or ranges)</option>
+            <option value="pdf_remove">Remove pages</option>
+            <option value="pdf_extract">Extract pages</option>
+            <option value="pdf_rotate">Rotate PDF</option>
+          </optgroup>
+          <optgroup label="Optimise / Edit PDF">
+            <option value="pdf_compress">Compress PDF</option>
+            <option value="pdf_repair">Repair PDF</option>
+            <option value="pdf_pagenum">Add page numbers</option>
+            <option value="pdf_watermark">Add watermark</option>
+          </optgroup>
+          <optgroup label="PDF Security">
+            <option value="pdf_protect">Protect PDF (password)</option>
+            <option value="pdf_unlock">Unlock PDF (remove password)</option>
+          </optgroup>
+          <optgroup label="From Image (3D)">
+            <option value="img2obj">Image → 3D relief mesh (.obj)</option>
+            <option value="img2stl">Image → 3D relief mesh (.stl)</option>
+            <option value="img2anaglyph">Image → Anaglyph 3D (.png)</option>
+          </optgroup>
+          <optgroup label="Video / Audio">
+            <option value="vid2mp3">Video → MP3 Enhanced 🔊 (320k + loudnorm + compression — recommended)</option>
+            <option value="vid2mp3_max">Video → MP3 Maximum Loudness 🔊🔊 (320k + max boost + +6dB)</option>
+            <option value="vid2mp3_std">Video → MP3 Standard (192k + normalize)</option>
+            <option value="vid2ytmp4">Video → YouTube-ready MP4 (.mp4)</option>
+            <option value="vid2webm">Video → WebM (.webm)</option>
+          </optgroup>
+          <optgroup label="Image ⇄ Image">
+            <option value="img2jpg">Image → JPG (.jpg)</option>
+            <option value="img2png">Image → PNG (.png)</option>
+            <option value="img2docx">Image → Word (.docx, editable)</option>
+          </optgroup>
+          <optgroup label="Medical Imaging (MRI / CT / X-ray / Ultrasound)">
+            <option value="med2png">Medical → PNG preview (.png)</option>
+            <option value="med2nii">Medical → NIfTI (.nii)</option>
+            <option value="med2nrrd">Medical → NRRD (.nrrd)</option>
+            <option value="med2mha">Medical → MetaImage (.mha)</option>
+            <option value="med2dcm">Medical → DICOM (.dcm)</option>
+            <option value="med2hdr">Medical → Analyze (.hdr, zip)</option>
+            <option value="med2mhd">Medical → MHD (.mhd, zip)</option>
+            <option value="dcm_anon">DICOM → Anonymized DICOM (strip PHI)</option>
+          </optgroup>
+          <optgroup label="RAW Camera (Canon / Nikon / Sony / …)">
+            <option value="raw2jpg">RAW → JPG (.jpg)</option>
+            <option value="raw2png">RAW → PNG (.png)</option>
+            <option value="raw2tiff">RAW → TIFF 16-bit (.tiff)</option>
+          </optgroup>
+          <optgroup label="Analyze">
+            <option value="scan_text">Scan for burned-in text (names / dates)</option>
+          </optgroup>
+        </select>
+        <p class="hint" id="convert-hint">PDF conversions need a PDF; 3D options need an image (jpg/png).</p>
+
+        <!-- Extra parameters for PDF tools -->
+        <div id="pdf-params" hidden>
+          <div class="field" id="param-merge" hidden>
+            <label for="merge-files">Additional PDFs to merge (in order)</label>
+            <input type="file" id="merge-files" class="select" accept="application/pdf" multiple />
+            <p class="hint">The main file above is first; these are appended in the order selected.</p>
+          </div>
+          <div class="field" id="param-ranges" hidden>
+            <label for="pdf-ranges">Page ranges</label>
+            <input type="text" id="pdf-ranges" class="select" placeholder="e.g. 1-3,5,8-10 (blank = each page)" />
+            <p class="hint">Comma-separated. Use N- for "N to end".</p>
+          </div>
+          <div class="field" id="param-pages" hidden>
+            <label for="pdf-pages">Pages</label>
+            <input type="text" id="pdf-pages" class="select" placeholder="e.g. 2,5-7" />
+            <p class="hint">Which pages to remove / extract.</p>
+          </div>
+          <div class="field" id="param-rotate" hidden>
+            <label for="pdf-degrees">Rotation</label>
+            <select id="pdf-degrees" class="select">
+              <option value="90">90° clockwise</option>
+              <option value="180">180°</option>
+              <option value="270">270° (90° counter-clockwise)</option>
+            </select>
+          </div>
+          <div class="field" id="param-pagenum" hidden>
+            <label for="pagenum-position">Page-number position</label>
+            <select id="pagenum-position" class="select">
+              <option value="bottom-center">Bottom center</option>
+              <option value="bottom-right">Bottom right</option>
+              <option value="bottom-left">Bottom left</option>
+              <option value="top-center">Top center</option>
+              <option value="top-right">Top right</option>
+              <option value="top-left">Top left</option>
+            </select>
+          </div>
+          <div class="field" id="param-watermark" hidden>
+            <label for="watermark-text">Watermark text</label>
+            <input type="text" id="watermark-text" class="select" value="CONFIDENTIAL" />
+            <div class="depth-head" style="margin-top:8px">
+              <label for="watermark-opacity">Opacity</label>
+              <span class="depth-value mono" id="watermark-opacity-val">0.15</span>
+            </div>
+            <input type="range" id="watermark-opacity" class="slider" min="0.05" max="0.6" step="0.05" value="0.15" />
+          </div>
+          <div class="field" id="param-compress" hidden>
+            <label for="compress-level">Compression level</label>
+            <select id="compress-level" class="select">
+              <option value="low">Less (better quality)</option>
+              <option value="recommended" selected>Recommended</option>
+              <option value="high">Extreme (smallest)</option>
+            </select>
+          </div>
+          <div class="field" id="param-password" hidden>
+            <label for="pdf-password">Password</label>
+            <div class="pass-row">
+              <input type="password" id="pdf-password" class="select" placeholder="PDF password" autocomplete="off" />
+            </div>
+            <p class="hint" id="pdf-password-hint">Used to protect or unlock the PDF.</p>
+          </div>
+        </div>
+
+        <div id="depth-control" hidden>
+          <div class="depth-head">
+            <label for="depth-slider">Relief depth</label>
+            <span class="depth-value mono" id="depth-value">0.20</span>
+          </div>
+          <input type="range" id="depth-slider" class="slider" min="0.05" max="0.80" step="0.05" value="0.20" />
+          <p class="hint">Higher = taller, more dramatic 3D (sculpture). Lower = subtle, coin-like emboss.</p>
+
+          <div class="preview-row">
+            <button id="preview-btn" class="ghost-btn wide-btn" type="button" disabled>Preview 3D</button>
+            <button id="spin-btn" class="ghost-btn" type="button" title="Toggle auto-rotate">⟳ spin</button>
+          </div>
+          <div id="viewer" class="viewer" hidden>
+            <canvas id="viewer-canvas"></canvas>
+            <div id="viewer-hint" class="viewer-hint">drag to orbit · scroll to zoom</div>
+          </div>
+        </div>
+
+        <div id="img-preview-control" hidden>
+          <button id="img-preview-btn" class="ghost-btn wide-btn" type="button" disabled>Preview image</button>
+          <div id="img-preview-stage" class="img-preview-stage" hidden>
+            <img id="img-preview" alt="rendered preview" />
+            <div class="img-preview-cap" id="img-preview-cap"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Effects field ── -->
+      <div class="field" id="effects-field" hidden>
+        <label for="effects-type">Image effect</label>
+        <select id="effects-type" class="select">
+          <option value="img_thermal">Thermal (FLIR-style: iron palette + scale bar + spot)</option>
+          <option value="img_xray">X-ray (glowing blue render + edge bloom)</option>
+        </select>
+        <div class="disclaimer">
+          <strong>Artistic effect only.</strong> These filters restyle a normal photo.
+          They are <strong>not</strong> real thermal or x-ray images and
+          <strong>cannot diagnose any medical condition</strong>. Thermal temperatures are
+          <strong>simulated</strong> from brightness, not measured.
+        </div>
+        <div id="fx-preview-control">
+          <button id="fx-preview-btn" class="ghost-btn wide-btn" type="button" disabled>Preview effect</button>
+          <div id="fx-preview-stage" class="img-preview-stage" hidden>
+            <img id="fx-preview" alt="effect preview" />
+            <div class="img-preview-cap" id="fx-preview-cap"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Video field ── -->
+      <div class="field" id="video-field" hidden>
+        <label for="video-type">Video effect</label>
+        <select id="video-type" class="select">
+          <option value="vid_thermal">Thermal effect video (.mp4)</option>
+          <option value="vid_3d">3D red/cyan anaglyph video (.mp4)</option>
+        </select>
+        <p class="hint">Accepts .mp4, .mkv, .mov, .webm — up to 50&nbsp;MB. Processing can take a little while.</p>
+        <div class="disclaimer">
+          <strong>Artistic effect only.</strong> A stylistic recolour / channel-shift of your video —
+          <strong>not</strong> a real thermal camera or medical imaging, and not for diagnosis.
+        </div>
+      </div>
+
+      <!-- ── Studio field ── -->
+      <div class="field" id="studio-field" hidden>
+        <label for="studio-text">Overlay text</label>
+        <textarea id="studio-text" class="studio-text" rows="2" placeholder="Type your title… (use Enter for a second line)">YOU WON'T BE ABLE TO EXPLAIN IT…</textarea>
+
+        <div class="studio-controls">
+          <div class="ctrl">
+            <span class="ctrl-label">Size <b id="fs-val">54</b></span>
+            <input type="range" id="font-size" class="slider" min="16" max="140" step="2" value="54" />
+          </div>
+          <div class="ctrl-row">
+            <label class="ctrl-inline">Text
+              <input type="color" id="text-color" value="#ffffff" />
+            </label>
+            <label class="ctrl-inline">Outline
+              <input type="color" id="stroke-color" value="#000000" />
+            </label>
+            <label class="ctrl-inline">
+              <input type="checkbox" id="band-toggle" /> Dark band
+            </label>
+          </div>
+          <div class="ctrl-row">
+            <label class="ctrl-inline">Align
+              <select id="text-align" class="select-sm">
+                <option value="center" selected>Center</option>
+                <option value="left">Left</option>
+                <option value="right">Right</option>
+              </select>
+            </label>
+            <label class="ctrl-inline">Position
+              <select id="text-pos" class="select-sm">
+                <option value="top">Top</option>
+                <option value="middle">Middle</option>
+                <option value="bottom" selected>Bottom</option>
+              </select>
+            </label>
+          </div>
+        </div>
+
+        <div id="studio-stage" class="studio-stage" hidden>
+          <canvas id="studio-canvas"></canvas>
+        </div>
+        <p class="hint" id="studio-hint">Drop an image above to start. Tip: you can also drag the text on the image to place it.</p>
+
+        <div class="studio-actions" hidden id="studio-actions">
+          <button id="studio-png" class="run-btn" type="button">Download PNG</button>
+          <button id="studio-jpg" class="ghost-btn" type="button">JPG</button>
+        </div>
+      </div>
+
+      <!-- ── Geo Map field ── -->
+      <div class="field" id="geo-field" hidden>
+        <div id="geo-status" class="geo-status">Drop a photo or video above to read its GPS location.</div>
+        <div id="geo-coords" class="geo-coords" hidden>
+          <div class="coord"><span class="coord-label">Latitude</span><span class="coord-val mono" id="geo-lat">—</span></div>
+          <div class="coord"><span class="coord-label">Longitude</span><span class="coord-val mono" id="geo-lon">—</span></div>
+          <a id="geo-gmaps" class="ghost-btn" href="#" target="_blank" rel="noopener" hidden>Open in Google Maps</a>
+        </div>
+        <div id="geo-map" class="geo-map" hidden></div>
+        <p class="hint">Reads GPS coordinates stored in the file's metadata (EXIF / video tags). Files stripped of metadata — most social-media images and screenshots — won't have a location.</p>
+      </div>
+
+      <!-- ── YouTube / Local Video Translation field ── -->
+      <div class="field" id="youtube-field" hidden>
+
+        <!-- Source toggle: YouTube URL  vs  Local video file -->
+        <div class="mode-toggle" role="tablist" aria-label="Video source" style="margin-bottom:14px">
+          <button id="yt-src-youtube" class="mode active" role="tab" aria-selected="true"
+                  title="Translate a YouTube video by URL">🔗 YouTube URL</button>
+          <button id="yt-src-local"   class="mode"        role="tab" aria-selected="false"
+                  title="Translate a video file already on your computer">📁 Local Video</button>
+        </div>
+
+        <!-- ── YouTube URL section ── -->
+        <div id="yt-url-section">
+          <label for="yt-url">YouTube video URL</label>
+          <input type="url" id="yt-url" class="select"
+                 placeholder="https://www.youtube.com/watch?v=…  or  https://youtu.be/…" />
+          <p class="hint">The video must be public (not private, age-restricted, or geo-blocked).</p>
+        </div>
+
+        <!-- ── Local video section ── -->
+        <div id="yt-local-section" hidden>
+          <label class="dropzone" id="yt-local-dropzone" for="yt-local-file"
+                 style="margin-bottom:8px">
+            <input type="file" id="yt-local-file"
+                   accept="video/mp4,video/x-matroska,video/quicktime,video/avi,video/webm,
+                           .mp4,.mkv,.mov,.avi,.webm,.m4v,.flv,.wmv,.ts,.mts,.mpeg,.mpg"
+                   hidden />
+            <div class="dz-inner">
+              <svg class="dz-icon" viewBox="0 0 24 24" width="34" height="34" fill="none"
+                   stroke="currentColor" stroke-width="1.4">
+                <path d="M12 16V4" /><path d="M7 9l5-5 5 5" /><path d="M4 20h16" />
+              </svg>
+              <p class="dz-title" id="yt-local-title">Drop a video or click to choose</p>
+              <p class="dz-sub"   id="yt-local-sub">Accepts .mp4 · .mkv · .mov · .avi · .webm — up to 3 GB</p>
+            </div>
+          </label>
+          <p class="hint">Your video stays on the server only long enough to translate — temp files are deleted after.</p>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px">
+          <div>
+            <label for="yt-src-lang">Spoken language (source)</label>
+            <select id="yt-src-lang" class="select">
+              <option value="pt" selected>Portuguese — BR &amp; Portugal (pt)</option>
+              <option value="en">English (en)</option>
+              <option value="es">Spanish (es)</option>
+              <option value="fr">French (fr)</option>
+              <option value="de">German (de)</option>
+              <option value="it">Italian (it)</option>
+              <option value="ar">Arabic (ar)</option>
+              <option value="zh">Chinese (zh)</option>
+              <option value="ja">Japanese (ja)</option>
+              <option value="ko">Korean (ko)</option>
+              <option value="ru">Russian (ru)</option>
+              <option value="nl">Dutch (nl)</option>
+              <option value="pl">Polish (pl)</option>
+              <option value="tr">Turkish (tr)</option>
+              <option value="sv">Swedish (sv)</option>
+            </select>
+          </div>
+          <div>
+            <label for="yt-tgt-lang">Translate into</label>
+            <select id="yt-tgt-lang" class="select">
+              <option value="fr" selected>French (fr)</option>
+              <option value="en">English (en)</option>
+              <option value="es">Spanish (es)</option>
+              <option value="de">German (de)</option>
+              <option value="it">Italian (it)</option>
+              <option value="pt">Portuguese (pt)</option>
+              <option value="ar">Arabic (ar)</option>
+              <option value="zh">Chinese (zh)</option>
+              <option value="ja">Japanese (ja)</option>
+              <option value="ko">Korean (ko)</option>
+              <option value="ru">Russian (ru)</option>
+              <option value="nl">Dutch (nl)</option>
+              <option value="pl">Polish (pl)</option>
+              <option value="tr">Turkish (tr)</option>
+              <option value="sv">Swedish (sv)</option>
+            </select>
+          </div>
+        </div>
+
+        <label for="yt-mode" style="margin-top:12px;display:block">Output mode</label>
+        <select id="yt-mode" class="select">
+          <option value="subtitle" selected>🔤 Subtitle — burn translated captions into video (original audio kept)</option>
+          <option value="dub">🎙 Dub — replace audio with TTS voice in target language</option>
+          <option value="both">🎙+🔤 Both — TTS voice + subtitles burned on screen (best quality)</option>
+          <option value="srt">📄 SRT only — export subtitle file, no re-encode (fastest)</option>
+        </select>
+        <p class="hint" id="yt-mode-hint">Subtitle keeps original audio with translated text on screen. Dub replaces audio with AI voice. Both combines them. SRT is just the text file.</p>
+
+        <label for="yt-model" style="margin-top:10px;display:block">Whisper transcription model</label>
+        <select id="yt-model" class="select">
+          <option value="base" selected>base — fast · good accuracy (default, ~74 MB)</option>
+          <option value="tiny">tiny — fastest · lower accuracy (~39 MB)</option>
+          <option value="small">small — better accuracy · recommended for Portuguese (~244 MB)</option>
+          <option value="medium">medium — best accuracy · needs ~2 GB RAM (~769 MB)</option>
+        </select>
+
+        <div class="disclaimer" style="margin-top:14px">
+          <strong>⏱ Processing time:</strong> A 10-min video takes <strong>3–8 min</strong> on VPS CPU.
+          Longer documentaries may take 20–40 min. Do not close the page while it runs.
+          <br>
+          <strong>🔊 Sync:</strong> Dub mode uses frame-accurate fixed-duration windows —
+          voice and image are precisely synchronized.
+          <br>
+          <strong>🌐 Translation:</strong>
+          <strong>DeepL</strong> (best quality, set <code>DEEPL_API_KEY</code>) →
+          Google Translate → MyMemory. Rate-limited? Set the DeepL key for unlimited quality.
+          <br>
+          <strong>📡 Requirements:</strong> yt-dlp, openai-whisper, deep-translator, edge-tts,
+          aria2 on the server. Optional: <code>pip install deepl</code>.
+        </div>
+      </div>
+
+      <!-- ── Passphrase (encrypt / decrypt only) ── -->
+      <div class="field" id="passphrase-field">
+        <label for="passphrase">Passphrase</label>
+        <div class="pass-row">
+          <input type="password" id="passphrase" placeholder="Used to derive your root key" autocomplete="off" />
+          <button id="toggle-pass" class="ghost-btn" type="button" title="Show / hide">view</button>
+        </div>
+        <p class="hint" id="pass-hint">Argon2id derives a memory-hard root key from this. There is no recovery if you forget it.</p>
+      </div>
+
+      <button id="run-btn" class="run-btn" disabled>
+        <span id="run-label">Encrypt file</span>
+      </button>
+
+      <div id="status" class="status" hidden></div>
+    </section>
+
+    <!-- Ratchet state panel -->
+    <aside class="panel state-panel">
+      <div class="state-head">
+        <h2>Ratchet state</h2>
+        <button id="rekey-btn" class="rekey-btn" title="Force a Diffie-Hellman ratchet step">
+          force&nbsp;heal
+        </button>
+      </div>
+
+      <div class="metrics">
+        <div class="metric">
+          <span class="m-label">Epoch</span>
+          <span class="m-value" id="m-epoch">—</span>
+        </div>
+        <div class="metric">
+          <span class="m-label">Operations</span>
+          <span class="m-value" id="m-ops">—</span>
+        </div>
+        <div class="metric wide">
+          <span class="m-label">Current ephemeral DH public</span>
+          <span class="m-value mono small" id="m-dhpub">—</span>
+        </div>
+      </div>
+
+      <div class="chain-block">
+        <div class="chain-label">
+          <span>Symmetric chain</span>
+          <span class="chain-note">one-way HKDF · forward secrecy</span>
+        </div>
+        <div class="chain" id="chain"></div>
+        <p class="chain-caption" id="chain-caption">
+          Each link is derived from the previous through a one-way function.
+          Past keys can't be recovered from later ones.
+        </p>
+      </div>
+
+      <div class="epoch-bar">
+        <div class="epoch-bar-label">
+          <span>Next DH heal</span>
+          <span id="heal-count">—</span>
+        </div>
+        <div class="epoch-track"><div class="epoch-fill" id="epoch-fill"></div></div>
+        <p class="epoch-caption">A fresh Diffie-Hellman step injects new entropy and heals the chain after compromise.</p>
+      </div>
+    </aside>
+  </main>
+
+  <footer class="footer">
+    <p>Files encrypt with a per-file Data Key wrapped by a ratchet-derived message key. Keys never leave your machine.</p>
+    <nav class="social" aria-label="Social links">
+      <a href="https://x.com/intent/tweet?url=https://your-domain.example&text=Check%20out%20RSI%20Vault" target="_blank" rel="noopener">Share on X</a>
+      <a href="https://www.facebook.com/sharer/sharer.php?u=https://your-domain.example" target="_blank" rel="noopener">Share on Facebook</a>
+      <a href="https://www.instagram.com/YOUR_HANDLE" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://www.youtube.com/@YOUR_CHANNEL" target="_blank" rel="noopener">YouTube</a>
+      <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://your-domain.example" target="_blank" rel="noopener">LinkedIn</a>
+    </nav>
+  </footer>
+
+  <script src="/vendor/three.min.js"></script>
+  <script src="/vendor/leaflet.js"></script>
+  <script src="/app.js"></script>
+</body>
+</html> 
+
+
